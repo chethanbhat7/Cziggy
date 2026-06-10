@@ -1,11 +1,16 @@
-//Start Server
 
-const app = (()=>{const r=require('./app');const a=(r&& (r.default||r.app||r));return (a&&typeof a.listen==='function')?a:require('express')()})()
-const dotenv = require('dotenv')
+const app=require("./app")
+const connectDatabase=require('./config/database')
 
-//load dotenv
-dotenv.config({'path': './config/config.env'})
+const dotenv=require("dotenv")
+//load env variable
+dotenv.config({path:"./config/config.env"})
 
-app.listen(process.env.PORT, () => {
-    console.log(`Server started on PORT:${process.env.PORT}`)
+//Connect to db
+connectDatabase()
+
+//start the server
+app.listen(process.env.PORT,()=>{
+    console.log(`Server Started on PORT:${process.env.PORT}`)
 })
+
