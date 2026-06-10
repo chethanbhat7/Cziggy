@@ -52,7 +52,7 @@ const userSchema=new mongoose.Schema({
         dafault:"user"
     },
     avatar:{
-        public_id=String,
+        public_id:String,
         url:String
     },
     passwordChangedAt:Date,
