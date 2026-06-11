@@ -3,8 +3,8 @@ const restaurantSchema=new mongoose.Schema({
     name:{
         type:String,
         required:[true,"Please Enter Restaurant Name"],
-        trim=true,
-        maxLength=[100,"Restaurant name cannot be more than 100 chars"]
+        trim: true,
+        maxLength:[100,"Restaurant name cannot be more than 100 chars"]
     },
 
     isVeg:{
@@ -60,5 +60,6 @@ const restaurantSchema=new mongoose.Schema({
 })
 
 restaurantSchema.index({location:"2dsphere"})
-restaurantSchema.index({address:text})
- 
+restaurantSchema.index({address:"text"})
+
+module.exports=mongoose.model("Restaurant",restaurantSchema)
