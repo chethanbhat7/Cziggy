@@ -11,4 +11,17 @@ exports.getAllRestaurants= catchAsyncErrors(async(req,res,next)=>{
         count:restaurants.length,
         restaurant:restaurants
      })
+})
+
+//get restaurant by its id
+
+exports.getRestaurant=catchAsyncErrors(async(req,res,next)=>{
+    const restaurant=await Restaurant.findById(req.params.storeId)
+    if(!restaurant){
+        return next(new ErrorHandler("No restaurant with the ID",404))
+    }
+    res.status(200).json({
+        status:"Success",
+        data : restaurant,
     })
+})
