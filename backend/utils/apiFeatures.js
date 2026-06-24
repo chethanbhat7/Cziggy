@@ -86,26 +86,6 @@ class APIFeatures {
 
     this.query = this.query.find(JSON.parse(queryStr));
 
-    // Check if sortBy is specified in the query parameters
-    if (this.queryStr.sortBy) {
-      const sortBy = this.queryStr.sortBy.toLowerCase();
-
-      // Sort by ratings (highest to lowest)
-      if (sortBy === "ratings") {
-        sortQuery = { ratings: -1 };
-      }
-      // Sort by reviews (highest to lowest)
-      else if (sortBy === "reviews") {
-        sortQuery = { numOfReviews: -1 };
-      }
-    }
-
-    // Apply the sorting query to the APIFeatures
-    this.query = this.query.sort(sortQuery);
-
-    //db.sar.find({“Last_Name”:{$gte:“C”}})
-    //this.query = this.query.find({ 'queryStr.price': { $gte: '900' } });
-    //console.log(this.query);
     return this;
   }
 
@@ -128,7 +108,7 @@ class APIFeatures {
       }
       // Sort by reviews (highest to lowest)
       else if (sortBy === "reviews") {
-        sortQuery = { numOfReviews: -1 };
+        sortQuery = { numberOfReviews: -1 };
       }
 
       // Apply the sorting query to the APIFeatures

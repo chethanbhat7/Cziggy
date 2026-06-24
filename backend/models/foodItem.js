@@ -6,12 +6,12 @@ const foodSchema=new mongoose.Schema({
         type:String,
         required:[true,"Please Enter Food Item name"],
         trim:true,
-        maxLenght:[100,"Food Item cannot be more than 100"]  
+        maxLength:[100,"Food Item cannot be more than 100"]  
     },
     price:{
         type:Number,
         required:[true,"Please Enter the Price"],
-        maxLenght:[5,"Price cannot be more than 5"],
+        maxLength:[5,"Price cannot be more than 5"],
         default:0.0
     },
     description:{
@@ -45,7 +45,7 @@ const foodSchema=new mongoose.Schema({
         default:0
     },
     restaurant:{
-        type:mongoose.Schema.Restaurant,
+        type:mongoose.Schema.Types.ObjectId,
         ref:"Restaurant"
     },
     numberOfReviews:{
@@ -74,4 +74,4 @@ const foodSchema=new mongoose.Schema({
     }
 })
 
-module.exports=mongoose.model('foodItem',foodSchema)
+module.exports=mongoose.model('FoodItem',foodSchema)

@@ -49,7 +49,7 @@ const userSchema=new mongoose.Schema({
     role:{
         type:String,
         enum:["user","admin"],
-        dafault:"user"
+        default:"user"
     },
     avatar:{
         public_id:String,
@@ -70,6 +70,9 @@ userSchema.pre('save',async function(){
     if(!this.isModified('password'))return;
     this.password=await bcrypt.hash(this.password,12)
     this.passwordConfirm=undefined
+    if(!this.isNew){
+        this.passwordChangedAt=Date.now()-1000;
+    }
 })
 
 //pass compare
@@ -81,7 +84,7 @@ userSchema.methods.correctPassword=async function(
 
 //checks whether the users pass was changed after getting JWT token
 //if yes old token is invalid and user must log in again
-userSchema.methods.changePasswordAfter=function(JWTTimestamp){
+userSchema.methods.changedPasswordAfter=function(JWTTimestamp){
     if(this.passwordChangedAt){
         const changedTimestamp=parseInt(
             this.passwordChangedAt.getTime()/1000,10

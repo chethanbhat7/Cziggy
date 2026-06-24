@@ -43,7 +43,7 @@ module.exports = (err, req, res, next) => {
     error.message = err.message;
 
     // Wrong Mongoose Object Id Error . if we type wrong product id in route we will get error.
-    if (err.name == "castError") {
+    if (err.name === "CastError") {
       const message = `Resource not found. Invalid: ${err.path}`;
       error = new ErrorHandler(message, 400);
     }

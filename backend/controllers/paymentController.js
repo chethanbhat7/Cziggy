@@ -23,7 +23,7 @@ exports.processPayment=catchAsyncErrors(async(req,res,next)=>{
                     name:item.foodItem.name,
                     images:[item.foodItem.images[0].url]
                 },
-                unit_ammount:items.foodItem.price*100
+                unit_amount:item.foodItem.price*100
             },
             quantity:item.quantity
         })),
@@ -39,7 +39,7 @@ exports.processPayment=catchAsyncErrors(async(req,res,next)=>{
                     type:"fixed_amount",
                     fixed_amount:{
                         amount:5500,
-                        currency='inr'
+                        currency:'inr'
                     },
                     delivery_estimate:{
                         minimum:{
@@ -48,13 +48,13 @@ exports.processPayment=catchAsyncErrors(async(req,res,next)=>{
                         },
                         maximum:{
                             unit:'hour',
-                            maximum:3
+                            value:3
                         }
                     }
                 }
             }
         ],
-        success_url:`${process.env.FRONTEND_URL}/sucess?session_id={CHECKOUT_SESSION_ID}`,
+        success_url:`${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url:`${process.env.FRONTEND_URL}/cart`
     })
     res.status(200).json({url:session.url})
