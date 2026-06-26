@@ -1,9 +1,20 @@
 import React from "react";
 import { Link, Route, Routes } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { Dropdown } from "react-bootstrap";
 import Search from "./Search";
+import { logout } from "../../redux/actions/userActions";
 import "../../App.css";
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const { cartItems } = useSelector((state) => state.cart);
+  const { user, loading } = useSelector((state) => state.user);
+
+  const logoutHandler = () => {
+    dispatch(logout());
+  };
+
   return (
     <>
       <nav className="navbar row sticky-top">
@@ -24,21 +35,49 @@ const Header = () => {
         </div>
 
         {/* Login */}
-        <div className="col-12 col-md-3 mt-4 mt-md-0 text-center">
-          {/* ml-> margin left (3unit from left) */}
-          <Link to="/cart" style={{ textDecoration: "none" }}>
-            <span className="ml-3" id="cart">
-              Cart
-            </span>
+        <div className="col-12 col-md-3 mt-4 mt-md-0 text-center d-flex align-items-center justify-content-center">
+          <Link to="/cart" style={{ textDecoration: "none" }} className="d-flex align-items-center mr-3">
+            <span id="cart">Cart</span>
             <span className="ml-1" id="cart_count">
-             2
+              {cartItems?.length || 0}
             </span>
           </Link>
-              <Link to="/users/login" className="material-symbols-outlined web_logo" >  
-           account_circle
+
+          {user ? (
+            <Dropdown className="d-inline">
+              <Dropdown.Toggle
+                variant="transparent"
+                id="dropdown-basic"
+                className="text-white d-flex align-items-center"
+                style={{ border: "none", boxShadow: "none" }}
+              >
+                <figure className="avatar avatar-nav mr-2 mb-0" style={{ display: "inline-block", width: "30px", height: "30px" }}>
+                  <img
+                    src={user.avatar?.url || "/images/images.png"}
+                    alt={user.name}
+                    className="rounded-circle"
+                    style={{ width: "30px", height: "30px", objectFit: "cover" }}
+                  />
+                </figure>
+                <span className="text-white font-weight-bold">{user.name}</span>
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item as={Link} to="/eats/orders/me/myOrders">
+                  Orders
+                </Dropdown.Item>
+                <Dropdown.Item onClick={logoutHandler} className="text-danger">
+                  Logout
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          ) : (
+            !loading && (
+              <Link to="/users/login" className="material-symbols-outlined web_logo">
+                account_circle
               </Link>
-            
-         
+            )
+          )}
         </div>
       </nav>
     </>

@@ -24,13 +24,16 @@ const restaurantSlice= createSlice({
             state.loading =true
         },
         getRestaurantsSuccess:(state,action)=>{
-            state.loading=false // stop loading,
-            state.restaurants = action.payload.restaurants, //store restaurants list
+            state.loading=false;
+            state.restaurants = action.payload.restaurants;
             state.count = action.payload.count;
+            state.pureVegRestaurantsCount = (action.payload.restaurants || []).filter(
+                (restaurant) => restaurant.isVeg
+            ).length;
         },
         getRestaurantsFail:(state,action)=>{
             state.loading=false,
-            state.errors = action.payload
+            state.error = action.payload
         },
 
         //create
@@ -100,7 +103,7 @@ export const {
 
     sortByRatings,
     sortByReviews,
-    showVegOnly,
+    toggleVegOnly,
     clearError
 } =restaurantSlice.actions
 

@@ -20,10 +20,16 @@ const restaurantSchema=new mongoose.Schema({
         type:Number,
         default:0
     },
+    numOfReviews:{
+        type:Number,
+        default:0
+    },
     location:{
-        type:String,
-        enum:['Point'],
-        required:true,
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true
+        },
         coordinates:{
             type:[Number],
             required:true

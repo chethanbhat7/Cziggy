@@ -1,32 +1,56 @@
-import React, { useState } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faIndianRupeeSign } from "@fortawesome/free-solid-svg-icons";
+import { addItemToCart, updateCartItemQuantity, removeItemFromCart } from "../redux/actions/cartActions";
 
-const Fooditem = ({ fooditem }) => {
-  const [quantity, setQuantity] = useState(1);
-  const [showButtons, setShowButtons] = useState(false);
+const Fooditem = ({ fooditem, restaurant }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { user } = useSelector((state) => state.user);
+  const { cartItems } = useSelector((state) => state.cart);
+
+  // Find if this item is in cart
+  const cartItem = cartItems?.find((item) => {
+    const itemFoodId = item.foodItem?._id || item.foodItem;
+    return itemFoodId === fooditem._id;
+  });
+
+  const quantity = cartItem ? cartItem.quantity : 0;
+  const showButtons = !!cartItem;
 
   // Add button click
   const addToCartHandler = () => {
-    setShowButtons(true);
-    setQuantity(1);
+    if (!user) {
+      navigate("/users/login");
+      return;
+    }
+    dispatch(addItemToCart(user._id || user.id, fooditem._id, restaurant, 1));
   };
 
   // Increase quantity
   const increaseQty = () => {
+    if (!user) {
+      navigate("/users/login");
+      return;
+    }
     if (quantity < fooditem.stock) {
-      setQuantity(quantity + 1);
+      dispatch(updateCartItemQuantity(user._id || user.id, fooditem._id, quantity + 1));
     }
   };
 
   // Decrease quantity
   const decreaseQty = () => {
+    if (!user) {
+      navigate("/users/login");
+      return;
+    }
     if (quantity > 1) {
-      setQuantity(quantity - 1);
+      dispatch(updateCartItemQuantity(user._id || user.id, fooditem._id, quantity - 1));
     } else {
-      // if 0 → go back to Add button
-      setShowButtons(false);
-      setQuantity(1);
+      dispatch(removeItemFromCart(user._id || user.id, fooditem._id));
     }
   };
 

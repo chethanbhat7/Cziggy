@@ -1,17 +1,10 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { getRestaurants } from "../redux/actions/restaurantAction";
+import React from "react";
+import { useSelector } from "react-redux";
 import "./css/count.css";
 
 const CountRestaurant = () => {
-  const dispatch = useDispatch();
-
   const { count, pureVegRestaurantsCount, showVegOnly, loading, error } =
     useSelector((state) => state.restaurants);
-
-  useEffect(() => {
-    dispatch(getRestaurants());
-  }, [dispatch, showVegOnly]);
 
   return (
     <div>
