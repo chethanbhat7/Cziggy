@@ -1,106 +1,82 @@
-import api from "../../utils/api";
+//fetch cart
+//Add items
+//update quantity
+//remove items
+//handle loading and  errors
 
+import api from "../../utils/api"
 import {
-  cartRequest,
-  cartFail,
-  cartSuccess,
-  updateCartSuccess,
-  removeCartSuccess,
-  clearCart as clearCartAction,
-  clearError as clearErrorAction,
-  saveDeliveryInfor
-} from "../slices/cartSlice";
+     cartRequest,
+    cartSuccess,
+    cartFail,
+    updateCartSuccess,
+    removeCartSuccess,
+} from "../slices/cartSlice"
 
-// Add Item to Cart
-export const addItemToCart = (userId, foodItemId, restaurantId, quantity) => async (dispatch) => {
-  try {
-    dispatch(cartRequest());
-    const response = await api.post("/v1/eats/cart/add-to-cart", {
-      userId,
-      foodItemId,
-      restaurantId,
-      quantity
-    });
-    dispatch(cartSuccess(response.data.cart));
-  } catch (error) {
-    dispatch(
-      cartFail(
-        error.response?.data?.message ||
-        error.response?.data?.errMessage ||
-        error.message
-      )
-    );
-  }
-};
+//fetch cart items
 
-// Update Cart Item Quantity
-export const updateCartItemQuantity = (userId, foodItemId, quantity) => async (dispatch) => {
-  try {
-    dispatch(cartRequest());
-    const response = await api.post("/v1/eats/cart/update-cart-item", {
-      userId,
-      foodItemId,
-      quantity
-    });
-    dispatch(updateCartSuccess(response.data.cart));
-  } catch (error) {
-    dispatch(
-      cartFail(
-        error.response?.data?.message ||
-        error.response?.data?.errMessage ||
-        error.message
-      )
-    );
-  }
-};
+export const fetchCartItems =() =>async(dispatch) =>{
+    try{
+       dispatch(cartRequest());
 
-// Remove Item from Cart
-export const removeItemFromCart = (userId, foodItemId) => async (dispatch) => {
-  try {
-    dispatch(cartRequest());
-    const response = await api.delete("/v1/eats/cart/delete-cart-item", {
-      data: { userId, foodItemId }
-    });
-    dispatch(removeCartSuccess(response.data));
-  } catch (error) {
-    dispatch(
-      cartFail(
-        error.response?.data?.message ||
-        error.response?.data?.errMessage ||
-        error.message
-      )
-    );
-  }
-};
+       const {data} = await api.get("/v1/eats/cart/get-cart");
 
-// Get Cart
-export const getCart = () => async (dispatch) => {
-  try {
-    dispatch(cartRequest());
-    const response = await api.get("/v1/eats/cart/get-cart");
-    dispatch(cartSuccess(response.data.data));
-  } catch (error) {
-    dispatch(
-      cartFail(
-        error.response?.data?.message ||
-        error.response?.data?.errMessage ||
-        error.message
-      )
-    );
-  }
-};
+       dispatch(cartSuccess(data.data))
+       console.log("CART API", data.data)
+    }catch(error){
+            dispatch(cartFail(error.response?.data?.message))
+    }
+}
 
-// Save Delivery Info
-export const saveDeliveryInfo = (deliveryInfo) => (dispatch) => {
-  dispatch(saveDeliveryInfor(deliveryInfo));
-};
+//add cart items
+export const addItemToCart =(foodItemId, restaurantId, quantity) =>async(dispatch,getState) =>{
+    try{
+         dispatch(cartRequest());
 
-// Clear Cart
-export const clearCart = () => (dispatch) => {
-  dispatch(clearCartAction());
-};
+         const{user} = getState().user;
 
-// Clear Cart Error
-export const clearCartError = () => (dispatch) => {
-  dispatch(clearErrorAction());
-};
+         const{data} = await api.post("/v1/eats/cart/add-to-cart" ,{
+            userId:user._id,
+            foodItemId,
+            restaurantId,
+            quantity
+         })
+
+         dispatch(cartSuccess(data.cart))
+    }catch(error){
+        dispatch(cartFail(error.response?.data?.message))
+    }
+}
+
+//update cart quantity
+
+export const updateCartQuantity = (foodItemId,quantity) => async(dispatch,getState) =>{
+    try{
+       const {user} = getState().user;
+       const {data} = await api.post("/v1/eats/cart/update-cart-item", {
+        userId: user._id,
+        foodItemId,
+        quantity
+       })
+
+       dispatch(updateCartSuccess(data.cart))
+    }catch(error){
+          dispatch(cartFail(error.response?.data?.message))
+    }
+}
+
+//remove item from cart
+export const removeItemFromCart = (foodItemId) => async(dispatch,getState) =>{
+    try{
+        const {user} = getState().user;
+
+        const {data} = await api.delete("/v1/eats/cart/delete-cart-item", {
+            data:{userId:user._id, foodItemId}
+        })
+
+        dispatch(removeCartSuccess(data))
+
+    }catch(error){
+         dispatch(cartFail(error.response?.data?.message))
+    }
+}

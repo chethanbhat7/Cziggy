@@ -5,9 +5,10 @@ const { ObjectId } = require("mongodb");
 const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const dotenv = require("dotenv");
+const path = require("path");
 
 //setting up config file
-dotenv.config({ path: "./config/config.env" });
+dotenv.config({ path: path.join(__dirname, "..", "config", "config.env") });
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 // Create a new order   =>  /api/v1/order/new
@@ -34,7 +35,7 @@ exports.newOrder = catchAsyncErrors(async (req, res, next) => {
     address:
       session.shipping_details.address.line1 +
       " " +
-      (session.shipping_details.address.line2 || ""),
+      session.shipping_details.address.line1,
     city: session.shipping_details.address.city,
     phoneNo: session.customer_details.phone,
     postalCode: session.shipping_details.address.postal_code,

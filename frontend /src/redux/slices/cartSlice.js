@@ -1,59 +1,64 @@
-import { createSlice } from '@reduxjs/toolkit'
+//store cart items
+//track restaurant info
+//handleloading errors
+//update cart when user adds/remove items
+//store delivery details
 
-const initialState={
-    cartItems:[],
-    restaurant:{},
-    loading:false,
+import {createSlice} from "@reduxjs/toolkit"
+
+//Initial 
+
+const initialState ={
+    cartItems: [],
+    restaurant: {},
+    loading: false,
     error:null
-}
+};
 
-const cartSlice=createSlice({
-    name:'cart',
+const cartSlice = createSlice({
+    name:"cart",
     initialState,
     reducers:{
-        cartRequest:(state)=>{
-            state.loading=true
+        cartRequest: (state) =>{
+            state.loading= true;
         },
         cartSuccess:(state,action)=>{
-            state.loading=false;
-            state.cartItems=action.payload.items;
-            state.restaurant=action.payload.restaurant;
+            state.loading = false;
+            state.cartItems = action.payload.items;
+            state.restaurant = action.payload.restaurant
         },
         cartFail:(state,action)=>{
-            state.loading=false;
-            state.error=action.payload;
+            state.loading= false;
+            state.error = action.payload
         },
+
         updateCartSuccess:(state,action)=>{
-            state.loading=false;
-            state.cartItems=action.payload.items;
-            state.restaurant=action.payload.restaurant;
+            state.cartItems = action.payload.items
         },
         removeCartSuccess:(state,action)=>{
-            state.loading=false;
-            state.cartItems=action.payload?.cart?.items|| [];
+             state.cartItems=action.payload?.cart?.items || [];
         },
-        clearCart:(state)=>{
-            state.cartItems=[];
+        clearCart:(state) =>{
+            state.cartItems =[];
         },
-        clearError:(state)=>{
-            state.error=null;
+        clearErrors:(state) =>{
+            state.error = null;
         },
-        saveDeliveryInfor:(state,action)=>{
-            state.deliveryInfo=action.payload;
+        saveDeliveryInfo: (state,action) =>{
+            state.deliveryInfo = action.payload
         }
     }
 })
 
-
 export const {
     cartRequest,
-    cartFail,
     cartSuccess,
+    cartFail,
     updateCartSuccess,
     removeCartSuccess,
     clearCart,
-    clearError,
-    saveDeliveryInfor
+    clearErrors,
+    saveDeliveryInfo
 } = cartSlice.actions;
 
-export default cartSlice.reducer;
+export default cartSlice.reducer

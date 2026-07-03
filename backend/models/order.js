@@ -1,3 +1,94 @@
+// 🎯 STEP 1: START WITH REAL-LIFE STORY
+
+// 👩‍🏫 Say:
+
+// “Guys, imagine you ordered food from Swiggy 🍔
+// What information gets saved?”
+
+// 👉 Ask students:
+
+// “What details does an order need?”
+
+// 🧠 Let them answer… then guide:
+
+// ✔ Delivery address
+// ✔ Which restaurant
+// ✔ Which user
+// ✔ What items ordered
+// ✔ Payment details
+// ✔ Total price
+// ✔ Order status
+
+// 🧠 STEP 2: BREAK INTO LOGICAL PARTS (VERY IMPORTANT)
+
+// 👩‍🏫 Say:
+
+// “Instead of writing everything randomly…
+// we divide order into parts”
+
+// 🧩 PART 1: Delivery Info
+
+// 👉 Where to deliver?
+
+// Address
+// City
+// Phone
+// Postal Code
+// Country
+// 🧩 PART 2: Who & From Where
+
+// 👉 Who ordered?
+
+// ✔ User
+
+// 👉 From which restaurant?
+
+// ✔ Restaurant
+
+// 🧩 PART 3: What Items Ordered
+
+// 👉 Very important 🔥
+
+// Each order contains multiple items:
+
+// Name
+// Quantity
+// Price
+// Image
+// FoodItem ID
+
+// 👉 Ask:
+
+// ❓ “Why store fooditem ID also?”
+
+// 👉 Answer:
+
+// ✔ To connect with FoodItem collection
+// ✔ To update stock
+
+// 🧩 PART 4: Payment Details
+
+// 👉 Payment ID
+// 👉 Payment status
+
+// 🧩 PART 5: Pricing
+
+// 👉 itemsPrice → total of items
+// 👉 taxPrice → tax
+// 👉 deliveryCharge → delivery
+// 👉 finalTotal → final bill
+
+// 🧩 PART 6: Order Status
+
+// 👉 Processing
+// 👉 Delivered
+
+// 🧩 PART 7: Time Tracking
+
+// 👉 createdAt
+// 👉 deliveredAt
+// 👉 paidAt
+
 const mongoose = require("mongoose");
 
 const orderSchema = mongoose.Schema({

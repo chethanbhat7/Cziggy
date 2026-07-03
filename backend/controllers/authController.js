@@ -1,75 +1,82 @@
-const User=require("../models/user")
-const ErrorHandler=require("../utils/errorHandler")
-const catchAsyncErrors=require("../middlewares/catchAsyncErrors")
-const sendToken=require("../utils/sendToken")
-const cloudinary=require("../config/cloudinary")
-const jwt=require("jsonwebtoken")
-const crypto=require("crypto")
-const {promisify}=require("util")
-const Email=require("../utils/email")
+const User = require("../models/user");
+const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
+const { promisify } = require("util");
 
-//Signup
-exports.signup=catchAsyncErrors(async(req,res,next)=>{
-    const {name,email,password,passwordConfirm,phoneNumber}=req.body;
-
-    let avatar=[]
-
-    if(!req.body.avatar || req.body.avatar==="/images/images.png"){
-        avatar={
-            public_id:"default",
-            url:"/images/images.png"
-        }
-    }
-    else{
-        const result=await cloudinary.uploader.upload(req.body.avatar,{
-            folder:'avatar',
-            width:150,
-            crop:"scale",
-        })
-        avatar={
-            public_id:result.public_id,
-            url:result.secure_url
-        }
-    }
-
-    const user=await User.create({
-        name,
-        email,
-        password,
-        passwordConfirm,
-        phoneNumber,
-        avatar
-    })
-
-    sendToken(user,200,res)
-
-})
+const ErrorHandler = require("../utils/errorHandler");
+const Email = require("../utils/email");
+const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
+const sendToken = require("../utils/sendToken");
+const cloudinary = require("../config/cloudinary");
 
 
+// Register user
+exports.signup = catchAsyncErrors(async (req, res, next) => {
 
-//login
-exports.login=catchAsyncErrors(async(req,res,next)=>{
-    
-    const {email,password}=req.body
-    if(!email || !password){
-        return next(new ErrorHandler("Please enter Email and Password",400))
-    }
+  const { name, email, password, passwordConfirm, phoneNumber } = req.body;
 
-    const user=await User.findOne({email}).select("+password")
+  let avatar = {};
 
-    if(!user){
-        return next(new ErrorHandler("Invalid Email or Password",401))
-    }
+  // If avatar not provided OR default avatar
+  if (!req.body.avatar || req.body.avatar === "/images/images.png") {
 
-    const isPasswordMatched=await user.correctPassword(password,user.password)
-    if(!isPasswordMatched){
-        return next(new ErrorHandler("Invalid Email or Password",401))
-    }
+    avatar = {
+      public_id: "default",
+      url: "/images/images.png",
+    };
 
-    sendToken(user,200,res)
+  } else {
 
-})
+    const result = await cloudinary.uploader.upload(req.body.avatar, {
+      folder: "avatars",
+      width: 150,
+      crop: "scale",
+    });
 
+    avatar = {
+      public_id: result.public_id,
+      url: result.secure_url,
+    };
+  }
+
+  const user = await User.create({
+    name,
+    email,
+    password,
+    passwordConfirm,
+    phoneNumber,
+    avatar,
+  });
+
+  sendToken(user, 200, res);
+
+});
+
+
+// Login
+exports.login = catchAsyncErrors(async (req, res, next) => {
+
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return next(new ErrorHandler("Please enter email & password", 400));
+  }
+
+  const user = await User.findOne({ email }).select("+password");
+
+  if (!user) {
+    return next(new ErrorHandler("Invalid Email or Password", 401));
+  }
+
+  const isPasswordMatched = await user.correctPassword(password, user.password);
+
+  if (!isPasswordMatched) {
+    return next(new ErrorHandler("Invalid Email or Password", 401));
+  }
+
+  sendToken(user, 200, res);
+
+});
 
 
 // Protect Route

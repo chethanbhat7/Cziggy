@@ -1,110 +1,98 @@
-import api from '../../utils/api';
+//Dispatch => Call API =>Update state based on success or failure
 
+import api from "../../utils/api";
 import {
-  userRequest,
-  userSuccess,
-  userFail,
+  loginRequest,
+  loginSuccess,
+  loginFail,
+  loadUserFail,
   logoutSuccess,
   logoutFail,
-  updateProfileRequest,
-  updateProfileSuccess,
-  updateProfileFail,
+  updateRequest,
+  updateSuccess,
+  updateFail,
+  updateReset,
   clearErrors,
 } from "../slices/userSlice";
 
-// Login Action
+// LOGIN
+
 export const login = (email, password) => async (dispatch) => {
   try {
-    dispatch(userRequest());
-    const response = await api.post('/v1/users/login', { email, password });
-    dispatch(userSuccess(response.data));
+    dispatch(loginRequest());
+    const { data } = await api.post("/v1/users/login", {
+      email,
+      password,
+    });
+    dispatch(loginSuccess(data.data.user));
   } catch (error) {
-    dispatch(
-      userFail(
-        error.response?.data?.message ||
-        error.response?.data?.errMessage ||
-        error.message
-      )
-    );
+    dispatch(loginFail(error.response?.data?.message || "Login failed"));
   }
 };
 
-// Register Action
+//Register
 export const register = (userData) => async (dispatch) => {
   try {
-    dispatch(userRequest());
-    const response = await api.post('/v1/users/signup', userData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
+    dispatch(loginRequest());
+
+    const { data } = await api.post("/v1/users/signup", userData, {
+      headers: { "Content-Type": "application/json" },
     });
-    dispatch(userSuccess(response.data));
+    dispatch(loginSuccess(data.data.user));
   } catch (error) {
-    dispatch(
-      userFail(
-        error.response?.data?.message ||
-        error.response?.data?.errMessage ||
-        error.message
-      )
-    );
+    dispatch(loginFail(error.response?.data?.message));
   }
 };
 
-// Load User Action
+//load user
 export const loadUser = () => async (dispatch) => {
+  // try{
+  //     dispatch(loginRequest())
+
+  //     const {data} = await api.get("/v1/users/me")
+
+  //     dispatch(loginSuccess(data.user))
+
+  // }catch(error){
+  //     dispatch(loadUserFail(error.response?.data?.message))
+  // }
+
   try {
-    dispatch(userRequest());
-    const response = await api.get("/v1/users/me");
-    dispatch(userSuccess(response.data));
+    dispatch(loginRequest());
+
+    const { data } = await api.get("/v1/users/me");
+
+    console.log("loadUser response:", data);
+
+    dispatch(loginSuccess(data.user));
   } catch (error) {
-    dispatch(
-      userFail(
-        error.response?.data?.message ||
-        error.response?.data?.errMessage ||
-        error.message
-      )
-    );
+    console.log("loadUser error:", error.response);
+
+    dispatch(loadUserFail(error.response?.data?.message));
   }
 };
 
-// Update Profile Action
+//update profile
+
 export const updateProfile = (userData) => async (dispatch) => {
   try {
-    dispatch(updateProfileRequest());
-    const response = await api.put('/v1/users/me/update', userData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    dispatch(updateRequest());
+
+    const { data } = await api.put("/v1/users/me/update", userData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
-    dispatch(updateProfileSuccess(response.data.success));
+    dispatch(updateSuccess(data.success));
   } catch (error) {
-    dispatch(
-      updateProfileFail(
-        error.response?.data?.message ||
-        error.response?.data?.errMessage ||
-        error.message
-      )
-    );
+    dispatch(updateFail(error.response?.data?.message));
   }
 };
 
-// Logout User Action
+//logout
 export const logout = () => async (dispatch) => {
   try {
-    await api.get("/v1/users/logout");
+    await api.get("v1/users/logout");
     dispatch(logoutSuccess());
   } catch (error) {
-    dispatch(
-      logoutFail(
-        error.response?.data?.message ||
-        error.response?.data?.errMessage ||
-        error.message
-      )
-    );
+    dispatch(logoutFail(error.response?.data?.message));
   }
-};
-
-// Clear Errors Action
-export const clearError = () => (dispatch) => {
-  dispatch(clearErrors());
 };

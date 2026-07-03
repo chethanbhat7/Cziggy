@@ -1,70 +1,94 @@
-import api from "../../utils/api";
+import api from "../../utils/api"
 
 import {
-  createOrderRequest,
-  createOrderSuccess,
-  createOrderFail,
-  myOrdersRequest,
-  myOrdersSuccess,
-  myOrdersFail,
-  orderDetailsRequest,
-  orderDetailsSuccess,
-  orderDetailsFail,
-  clearOrderErrors,
-} from "../slices/orderSlice";
+    createOrderRequest,
+    createOrderSuccess,
+    createOrderFail,
+    paymentRequest,
+    paymentSuccess,
+    paymentFail,
+    myOrdersRequest,
+    myOrdersSuccess,
+    myOrdersFail,
+    orderDetailsRequest,
+    orderDetailsSuccess,
+    orderDetailsFail
+} from "../slices/orderSlice"
 
-// Create Order Action
-export const createOrder = (session_id) => async (dispatch) => {
-  try {
-    dispatch(createOrderRequest());
-    const response = await api.post("/v1/eats/orders/new", { session_id });
-    dispatch(createOrderSuccess(response.data.order));
-  } catch (error) {
-    dispatch(
-      createOrderFail(
-        error.response?.data?.message ||
-        error.response?.data?.errMessage ||
-        error.message
-      )
-    );
-  }
-};
+//create order
+export const createOrder = (session_id) => async(dispatch) =>{
+    try{
 
-// Get My Orders Action
-export const myOrders = () => async (dispatch) => {
-  try {
-    dispatch(myOrdersRequest());
-    const response = await api.get("/v1/eats/orders/me/myOrders");
-    dispatch(myOrdersSuccess(response.data.orders));
-  } catch (error) {
-    dispatch(
-      myOrdersFail(
-        error.response?.data?.message ||
-        error.response?.data?.errMessage ||
-        error.message
-      )
-    );
-  }
-};
+        dispatch(createOrderRequest());
+        const {data} = await api.post("/v1/eats/orders/new",{session_id},
+            {
+                headers:{
+                    "Content-Type": "application/json"
+                }
+            }
+        )
 
-// Get Order Details Action
-export const getOrderDetails = (id) => async (dispatch) => {
-  try {
-    dispatch(orderDetailsRequest());
-    const response = await api.get(`/v1/eats/orders/${id}`);
-    dispatch(orderDetailsSuccess(response.data.order));
-  } catch (error) {
-    dispatch(
-      orderDetailsFail(
-        error.response?.data?.message ||
-        error.response?.data?.errMessage ||
-        error.message
-      )
-    );
-  }
-};
+        dispatch(createOrderSuccess(data))
 
-// Clear Order Errors Action
-export const clearErrors = () => (dispatch) => {
-  dispatch(clearOrderErrors());
-};
+    }catch(error)
+    {
+       dispatch(createOrderFail(error.response?.data?.message))
+    }
+}
+
+
+//payment
+export const payment = (items,restaurant) => async(dispatch) =>{
+    try{
+
+        dispatch(paymentRequest());
+        const {data} = await api.post("/v1/payment/process",{items, restaurant},
+            {
+                headers:{
+                    "Content-Type": "application/json"
+                }
+            }
+        )
+
+        if(data.url){
+            window.location.assign(data.url)
+        }
+
+        dispatch(paymentSuccess())
+
+    }catch(error)
+    {
+       dispatch(paymentFail(error.response?.data?.message))
+    }
+}
+
+//my orders
+export const myOrders = () => async(dispatch) =>{
+    try{
+
+        dispatch(myOrdersRequest());
+        const {data} = await api.get("/v1/eats/orders/me/myOrders")
+
+        dispatch(myOrdersSuccess(data.orders))
+
+    }catch(error)
+    {
+       dispatch(myOrdersFail(error.response?.data?.message))
+    }
+}
+
+//orderDetails
+export const getOrderDetails = (id) => async(dispatch) =>{
+    try{
+
+        dispatch(orderDetailsRequest());
+        const {data} = await api.get(`/v1/eats/orders/${id}`)
+
+        dispatch(orderDetailsSuccess(data.order))
+
+    }catch(error)
+    {
+       dispatch(orderDetailsFail(error.response?.data?.message))
+    }
+}
+
