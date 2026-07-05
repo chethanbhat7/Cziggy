@@ -1,4 +1,4 @@
-# GeniFood
+# Cziggy
 
 A MERN stack food ordering web application created for restaurants (e.g., Zyka).
 
